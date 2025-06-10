@@ -18,12 +18,18 @@ document.addEventListener('DOMContentLoaded', function() {
     Promise.all([
         loadScript('../vars/indiana-logo.js'),
         loadScript('../vars/ohio-logo.js'),
-        loadScript('../vars/national-logo.js')
+        loadScript('../vars/national-logo.js'),
+        loadScript('../vars/tiptop-logo.js'),
+        loadScript('../vars/buckeye-logo.js'),
+        loadScript('../vars/dickys-logo.js')
     ]).then(() => {
         // Assign the loaded logos to COMPANY_LOGOS
         if (typeof INDIANA_LOGO !== 'undefined') COMPANY_LOGOS.indiana = INDIANA_LOGO;
         if (typeof OHIO_LOGO !== 'undefined') COMPANY_LOGOS.ohio = OHIO_LOGO;
         if (typeof NATIONAL_LOGO !== 'undefined') COMPANY_LOGOS.national = NATIONAL_LOGO;
+        if (typeof TIPTOP_LOGO !== 'undefined') COMPANY_LOGOS.tiptop = TIPTOP_LOGO;
+        if (typeof BUCKEYE_LOGO !== 'undefined') COMPANY_LOGOS.buckeye = BUCKEYE_LOGO;
+        if (typeof DICKYS_LOGO !== 'undefined') COMPANY_LOGOS.dickys = DICKYS_LOGO;
         
         console.log("Logos loaded successfully:", COMPANY_LOGOS);
         
@@ -64,6 +70,27 @@ const COMPANY_INFO = {
         secondWebsite: "https://www.nationalprideequip.com",
         color: "#0078D7",
         email: "myemail@nationalpridecarwash.com"
+    },
+    dickys: {
+        name: "Dickys Express",
+        website: "",
+        secondWebsite: "",
+        color: "#d72127",
+        email: "yourmail@dickeysexpress.com"
+    },
+    tiptop: {
+        name: "Tip Top",
+        website: "",
+        secondWebsite: "",
+        color: "#031931",
+        email: "yourmail@tiptop.com"
+    },
+    buckeye: {
+        name: "Buckeye Express",
+        website: "",
+        secondWebsite: "",
+        color: "#95262c",
+        email: "yourmail@buckeyeexpress.com"
     }
 };
 
@@ -137,11 +164,19 @@ function initFormEvents() {
         officePhoneInput.value = '(419) 567-6133';
     }
     
-    // Make sure the address field has a default value
-    const addressInput = document.getElementById('address');
-    if (addressInput.value === '') {
-        addressInput.value = '905 Hickory Ln, Mansfield, OH 44905';
-    }
+    // Address editing functionality
+    const editAddressCheckbox = document.getElementById('edit-address');
+    const addressField = document.getElementById('address-field');
+    const customAddressInput = document.getElementById('custom-address');
+    
+    editAddressCheckbox.addEventListener('change', function() {
+        if (this.checked) {
+            addressField.style.display = 'block';
+        } else {
+            addressField.style.display = 'none';
+        }
+        updateSignaturePreview();
+    });
     
     // Save button
     document.getElementById('save-signature').addEventListener('click', saveSignature);
@@ -203,50 +238,6 @@ function updateSignaturePreview() {
     
     if (signatureHtml) {
         preview.innerHTML = signatureHtml;
-        
-        // Initialize tooltips if they exist
-        const tooltips = document.querySelectorAll('.help-tooltip');
-        tooltips.forEach(tooltip => {
-            tooltip.addEventListener('mouseover', function() {
-                const title = this.getAttribute('title');
-                this.setAttribute('data-title', title);
-                this.removeAttribute('title');
-                
-                const tooltipEl = document.createElement('div');
-                tooltipEl.className = 'tooltip-text';
-                tooltipEl.textContent = title;
-                tooltipEl.style.position = 'absolute';
-                tooltipEl.style.backgroundColor = '#333';
-                tooltipEl.style.color = 'white';
-                tooltipEl.style.padding = '5px 10px';
-                tooltipEl.style.borderRadius = '4px';
-                tooltipEl.style.fontSize = '12px';
-                tooltipEl.style.zIndex = '100';
-                tooltipEl.style.opacity = '0';
-                tooltipEl.style.transition = 'opacity 0.3s';
-                document.body.appendChild(tooltipEl);
-                
-                const rect = this.getBoundingClientRect();
-                tooltipEl.style.top = `${rect.top - tooltipEl.offsetHeight - 10 + window.scrollY}px`;
-                tooltipEl.style.left = `${rect.left + (rect.width / 2) - (tooltipEl.offsetWidth / 2) + window.scrollX}px`;
-                setTimeout(() => tooltipEl.style.opacity = '1', 10);
-                
-                this.tooltipElement = tooltipEl;
-            });
-            
-            tooltip.addEventListener('mouseout', function() {
-                if (this.tooltipElement) {
-                    document.body.removeChild(this.tooltipElement);
-                    this.tooltipElement = null;
-                }
-                
-                const title = this.getAttribute('data-title');
-                if (title) {
-                    this.setAttribute('title', title);
-                    this.removeAttribute('data-title');
-                }
-            });
-        });
     } else {
         preview.innerHTML = '<div class="signature-loading">Fill in the required fields to preview your signature</div>';
     }
@@ -256,8 +247,11 @@ function generateSignatureHtml() {
     // Get form values
     const name = document.getElementById('name').value.trim();
     const title = document.getElementById('title').value.trim();
-    // Get the static address and check if it should be included
-    const address = document.getElementById('address').value.trim();
+    // Get address - use custom address if edit checkbox is checked, otherwise use default
+    const editAddress = document.getElementById('edit-address').checked;
+    const address = editAddress ? 
+        document.getElementById('custom-address').value.trim() : 
+        '905 Hickory Ln, Mansfield, OH 44905';
     const includeAddress = document.getElementById('include-address').checked;
     const includeCell = document.getElementById('include-cell').checked;
     const cellPhone = includeCell ? document.getElementById('cell-phone').value.trim() : '';
@@ -283,8 +277,7 @@ function generateSignatureHtml() {
     let html;
     
     if (isAppleMode) {
-        // APPLE VERSION: Much simpler layout
-        
+        // APPLE VERSION: Much simpler layout with border-left
         html = `
         <div style="background-color: transparent !important;">
             <table cellpadding="0" cellspacing="0" border="0" style="font-family: Arial, sans-serif; border-collapse: collapse; background-color: transparent !important;">
@@ -296,12 +289,31 @@ function generateSignatureHtml() {
                         <div style="font-weight: bold; font-size: 18px; color: ${borderColor}; margin-bottom: 2px; background-color: transparent !important;">${name}</div>
                         <div style="font-size: 14px; color: #333333; margin-bottom: 6px; background-color: transparent !important;">${title}</div>
                         <div style="font-size: 13px; margin-bottom: 2px; background-color: transparent !important;">${COMPANY_INFO[company].name}</div>
-                        ${includeAddress ? `<div style="font-size: 12px; margin-bottom: 2px; background-color: transparent !important;">${address}</div>` : ""}
-    `;
+                        ${includeAddress ? `<div style="font-size: 12px; margin-bottom: 2px; background-color: transparent !important;">${address}</div>` : ''}
+                        <div style="font-size: 12px; margin-bottom: 2px; background-color: transparent !important;">Office: <a href="tel:${officePhone.replace(/[^\d]/g, '')}" style="color: #333333; text-decoration: none; background-color: transparent !important;">${officePhone}</a>${extension ? ' ext. ' + extension : ''}</div>
+                        ${includeCell && cellPhone ? `<div style="font-size: 12px; margin-bottom: 2px; background-color: transparent !important;">Cell: <a href="tel:${cellPhone.replace(/[^\d]/g, '')}" style="color: #333333; text-decoration: none; background-color: transparent !important;">${cellPhone}</a></div>` : ''}
+                        <div style="font-size: 12px; margin-bottom: 2px; background-color: transparent !important;">Email: <a href="mailto:${email || COMPANY_INFO[company].email}" style="color: ${borderColor}; text-decoration: none; background-color: transparent !important;">${email || COMPANY_INFO[company].email}</a></div>
+                        ${company === 'national' ? `
+                        <div style="font-size: 12px; margin-bottom: 2px; background-color: transparent !important;">
+                            <a href="${COMPANY_INFO[company].website}" style="color: ${borderColor}; text-decoration: none; background-color: transparent !important;">carwashsuperstore.com</a><br>
+                            <a href="${COMPANY_INFO[company].secondWebsite}" style="color: #ee3d3a; text-decoration: none; background-color: transparent !important;">nationalprideequip.com</a>
+                        </div>
+                        ` : ''}
+                    </td>
+                </tr>
+            </table>
+            ${includeDisclaimer ? `
+            <table cellpadding="0" cellspacing="0" border="0" style="font-family: Arial, sans-serif; border-collapse: collapse; width: 100%; max-width: 600px; background-color: transparent !important;">
+                <tr style="background-color: transparent !important;">
+                    <td style="font-size: 10px; color: #666666; font-style: normal; margin-top: 10px; padding-top: 10px; background-color: transparent !important;">
+                        ${DEFAULT_DISCLAIMER}
+                    </td>
+                </tr>
+            </table>` : ''}
+        </div>
+        `;
     } else {
-        // WINDOWS VERSION: Original design with colored bar cell
-        const logoHeight = company === 'national' ? "220px" : "180px";
-        
+        // STANDARD VERSION: Original design with colored bar cell
         html = `
         <div style="background-color: transparent !important;">
             <table cellpadding="0" cellspacing="0" border="0" style="font-family: Arial, sans-serif; border-collapse: collapse; background-color: transparent !important;">
@@ -314,49 +326,30 @@ function generateSignatureHtml() {
                         <div style="font-weight: bold; font-size: 18px; color: ${borderColor}; margin-bottom: 2px; background-color: transparent !important;">${name}</div>
                         <div style="font-size: 14px; color: #333333; margin-bottom: 6px; background-color: transparent !important;">${title}</div>
                         <div style="font-size: 13px; margin-bottom: 2px; background-color: transparent !important;">${COMPANY_INFO[company].name}</div>
-                        ${includeAddress ? `<div style="font-size: 12px; margin-bottom: 2px; background-color: transparent !important;">${address}</div>` : ""}
-    `;
-    }
-    
-    // Office phone is always included
-    html += `<div style="font-size: 12px; margin-bottom: 2px; background-color: transparent !important;">Office: <a href="tel:${officePhone.replace(/[^\d]/g, '')}" style="color: #333333; text-decoration: none; background-color: transparent !important;">${officePhone}</a>${extension ? ' ext. ' + extension : ''}</div>`;
-    
-    if (includeCell && cellPhone) {
-        html += `<div style="font-size: 12px; margin-bottom: 2px; background-color: transparent !important;">Cell: <a href="tel:${cellPhone.replace(/[^\d]/g, '')}" style="color: #333333; text-decoration: none; background-color: transparent !important;">${cellPhone}</a></div>`;
-    }
-    
-    // Use company-specific email domain or user provided email
-    const displayEmail = email || COMPANY_INFO[company].email;
-    html += `<div style="font-size: 12px; margin-bottom: 2px; background-color: transparent !important;">Email: <a href="mailto:${displayEmail}" style="color: ${borderColor}; text-decoration: none; background-color: transparent !important;">${displayEmail}</a></div>`;
-    
-    // Add websites only for National Pride
-    if (company === 'national') {
-        html += `
-            <div style="font-size: 12px; margin-bottom: 2px; background-color: transparent !important;">
-                <a href="${COMPANY_INFO[company].website}" style="color: ${borderColor}; text-decoration: none; background-color: transparent !important;">carwashsuperstore.com</a><br>
-                <a href="${COMPANY_INFO[company].secondWebsite}" style="color: #ee3d3a; text-decoration: none; background-color: transparent !important;">nationalprideequip.com</a>
-            </div>
+                        ${includeAddress ? `<div style="font-size: 12px; margin-bottom: 2px; background-color: transparent !important;">${address}</div>` : ''}
+                        <div style="font-size: 12px; margin-bottom: 2px; background-color: transparent !important;">Office: <a href="tel:${officePhone.replace(/[^\d]/g, '')}" style="color: #333333; text-decoration: none; background-color: transparent !important;">${officePhone}</a>${extension ? ' ext. ' + extension : ''}</div>
+                        ${includeCell && cellPhone ? `<div style="font-size: 12px; margin-bottom: 2px; background-color: transparent !important;">Cell: <a href="tel:${cellPhone.replace(/[^\d]/g, '')}" style="color: #333333; text-decoration: none; background-color: transparent !important;">${cellPhone}</a></div>` : ''}
+                        <div style="font-size: 12px; margin-bottom: 2px; background-color: transparent !important;">Email: <a href="mailto:${email || COMPANY_INFO[company].email}" style="color: ${borderColor}; text-decoration: none; background-color: transparent !important;">${email || COMPANY_INFO[company].email}</a></div>
+                        ${company === 'national' ? `
+                        <div style="font-size: 12px; margin-bottom: 2px; background-color: transparent !important;">
+                            <a href="${COMPANY_INFO[company].website}" style="color: ${borderColor}; text-decoration: none; background-color: transparent !important;">carwashsuperstore.com</a><br>
+                            <a href="${COMPANY_INFO[company].secondWebsite}" style="color: #ee3d3a; text-decoration: none; background-color: transparent !important;">nationalprideequip.com</a>
+                        </div>
+                        ` : ''}
+                    </td>
+                </tr>
+            </table>
+            ${includeDisclaimer ? `
+            <table cellpadding="0" cellspacing="0" border="0" style="font-family: Arial, sans-serif; border-collapse: collapse; width: 100%; max-width: 600px; background-color: transparent !important;">
+                <tr style="background-color: transparent !important;">
+                    <td style="font-size: 10px; color: #666666; font-style: normal; margin-top: 10px; padding-top: 10px; background-color: transparent !important;">
+                        ${DEFAULT_DISCLAIMER}
+                    </td>
+                </tr>
+            </table>` : ''}
+        </div>
         `;
     }
-    
-    html += `
-                </td>
-            </tr>
-        </table>
-    `;
-    
-    if (includeDisclaimer) {
-        html += ``
-        <table cellpadding="0" cellspacing="0" border="0" style="font-family: Arial, sans-serif; border-collapse: collapse; width: 100%; max-width: 600px; background-color: transparent !important;">
-            <tr style="background-color: transparent !important;">
-                <td style="font-size: 10px; color: #666666; font-style: normal; margin-top: 10px; padding-top: 10px; background-color: transparent !important;">
-                    ${DEFAULT_DISCLAIMER}
-                </td>
-            </tr>
-        </table>``;
-    }
-    
-    html += `</div>`;
     
     return html;
 }
@@ -397,9 +390,7 @@ function saveSignature() {
         officePhone: document.getElementById('office-phone').value.trim(),
         extension: document.getElementById('extension').value.trim(),
         email: document.getElementById('email').value.trim(),
-        includeDisclaimer: document.getElementById('include-disclaimer').checked,
-        // Save Apple Outlook compatibility mode
-        appleMode: document.getElementById('apple-outlook') ? document.getElementById('apple-outlook').checked : false
+        includeDisclaimer: document.getElementById('include-disclaimer').checked
     };
     
     // Get existing signatures from local storage
@@ -496,11 +487,6 @@ function editSignature(id) {
     document.getElementById('extension').value = signature.extension;
     document.getElementById('email').value = signature.email;
     document.getElementById('include-disclaimer').checked = signature.includeDisclaimer;
-    
-    // Restore Apple Outlook compatibility mode if it exists
-    if (document.getElementById('apple-outlook') && signature.hasOwnProperty('appleMode')) {
-        document.getElementById('apple-outlook').checked = signature.appleMode;
-    }
     
     // Update company buttons
     const companyButtons = document.querySelectorAll('.company-btn');

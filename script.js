@@ -18,12 +18,18 @@ document.addEventListener('DOMContentLoaded', function() {
     Promise.all([
         loadScript('vars/indiana-logo.js'),
         loadScript('vars/ohio-logo.js'),
-        loadScript('vars/national-logo.js')
+        loadScript('vars/national-logo.js'),
+        loadScript('vars/tiptop-logo.js'),
+        loadScript('vars/buckeye-logo.js'),
+        loadScript('vars/dickys-logo.js')
     ]).then(() => {
         // Assign the loaded logos to COMPANY_LOGOS
         if (typeof INDIANA_LOGO !== 'undefined') COMPANY_LOGOS.indiana = INDIANA_LOGO;
         if (typeof OHIO_LOGO !== 'undefined') COMPANY_LOGOS.ohio = OHIO_LOGO;
         if (typeof NATIONAL_LOGO !== 'undefined') COMPANY_LOGOS.national = NATIONAL_LOGO;
+        if (typeof TIPTOP_LOGO !== 'undefined') COMPANY_LOGOS.tiptop = TIPTOP_LOGO;
+        if (typeof BUCKEYE_LOGO !== 'undefined') COMPANY_LOGOS.buckeye = BUCKEYE_LOGO;
+        if (typeof DICKYS_LOGO !== 'undefined') COMPANY_LOGOS.dickys = DICKYS_LOGO;
         
         console.log("Logos loaded successfully:", COMPANY_LOGOS);
         
@@ -64,6 +70,27 @@ const COMPANY_INFO = {
         secondWebsite: "https://www.nationalprideequip.com",
         color: "#0078D7",
         email: "myemail@nationalpridecarwash.com"
+    },
+    dickys: {
+        name: "Dickys Express",
+        website: "",
+        secondWebsite: "",
+        color: "#d72127",
+        email: "yourmail@dickeysexpress.com"
+    },
+    tiptop: {
+        name: "Tip Top",
+        website: "",
+        secondWebsite: "",
+        color: "#031931",
+        email: "yourmail@tiptop.com"
+    },
+    buckeye: {
+        name: "Buckeye Express",
+        website: "",
+        secondWebsite: "",
+        color: "#95262c",
+        email: "yourmail@buckeyeexpress.com"
     }
 };
 
@@ -137,11 +164,19 @@ function initFormEvents() {
         officePhoneInput.value = '(419) 567-6133';
     }
     
-    // Make sure the address field has a default value
-    const addressInput = document.getElementById('address');
-    if (addressInput.value === '') {
-        addressInput.value = '905 Hickory Ln, Mansfield, OH 44905';
-    }
+    // Address editing functionality
+    const editAddressCheckbox = document.getElementById('edit-address');
+    const addressField = document.getElementById('address-field');
+    const customAddressInput = document.getElementById('custom-address');
+    
+    editAddressCheckbox.addEventListener('change', function() {
+        if (this.checked) {
+            addressField.style.display = 'block';
+        } else {
+            addressField.style.display = 'none';
+        }
+        updateSignaturePreview();
+    });
     
     // Save button
     document.getElementById('save-signature').addEventListener('click', saveSignature);
@@ -212,8 +247,11 @@ function generateSignatureHtml() {
     // Get form values
     const name = document.getElementById('name').value.trim();
     const title = document.getElementById('title').value.trim();
-    // Get the static address and check if it should be included
-    const address = document.getElementById('address').value.trim();
+    // Get address - use custom address if edit checkbox is checked, otherwise use default
+    const editAddress = document.getElementById('edit-address').checked;
+    const address = editAddress ? 
+        document.getElementById('custom-address').value.trim() : 
+        '905 Hickory Ln, Mansfield, OH 44905';
     const includeAddress = document.getElementById('include-address').checked;
     const includeCell = document.getElementById('include-cell').checked;
     const cellPhone = includeCell ? document.getElementById('cell-phone').value.trim() : '';
