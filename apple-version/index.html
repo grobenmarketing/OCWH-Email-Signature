@@ -11,7 +11,7 @@
         <div class="container">
             <div style="display: flex; justify-content: space-between; align-items: center;">
                 <div>
-                    <h1>Email Signature Generator v1.8 (Apple Version)</h1>
+                    <h1>Email Signature Generator v1.9 (Apple Version)</h1>
                     <p>Create professional email signatures for Outlook on Mac/iOS.</p>
                 </div>
                 <div style="text-align: right; background-color: rgba(255,255,255,0.2); padding: 8px 12px; border-radius: 4px;">
@@ -42,12 +42,18 @@
                         <button type="button" class="company-btn" id="indiana-btn">Indiana CWH</button>
                         <button type="button" class="company-btn" id="national-btn">National Pride</button>
                         <button type="button" class="company-btn" id="ohio-btn">Ohio CWH</button>
+                        <button type="button" class="company-btn" id="dickys-btn">Dickys Express</button>
+                        <button type="button" class="company-btn" id="tiptop-btn">Tip Top</button>
+                        <button type="button" class="company-btn" id="buckeye-btn">Buckeye Express</button>
                         
                         <!-- Hidden select for backend compatibility -->
                         <select id="company-dropdown" name="company" style="display: none;">
                             <option value="indiana">Indiana Car Wash Holdings</option>
                             <option value="ohio">Ohio Car Wash Holdings</option>
                             <option value="national">National Pride Equipment</option>
+                            <option value="dickys">Dickys Express</option>
+                            <option value="tiptop">Tip Top</option>
+                            <option value="buckeye">Buckeye Express</option>
                         </select>
                     </div>
                     
@@ -79,6 +85,10 @@
                         <label for="cell-phone">Cell Phone</label>
                         <input type="text" id="cell-phone" placeholder="(555) 123-4567">
                     </div>
+                    <div class="form-group" id="address-field" style="display: none;">
+                        <label for="custom-address">Address</label>
+                        <input type="text" id="custom-address" value="905 Hickory Ln, Mansfield, OH 44905" placeholder="Enter address">
+                    </div>
                     
                     <div class="options-group">
                         <div class="checkbox-wrapper">
@@ -88,6 +98,10 @@
                         <div class="checkbox-wrapper">
                             <input type="checkbox" id="include-address" checked>
                             <label for="include-address">Include Address</label>
+                        </div>
+                        <div class="checkbox-wrapper">
+                            <input type="checkbox" id="edit-address">
+                            <label for="edit-address">Edit Address</label>
                         </div>
                         <div class="checkbox-wrapper">
                             <input type="checkbox" id="include-disclaimer" checked>
@@ -178,7 +192,7 @@
         </div>
         
         <footer>
-            <p>Vibe Coded by Keith Groben</p>
+            <p>Vibe Coded by Keith Groben (Often Imitated, Never Replicated)</p>
         </footer>
     </div>
     
