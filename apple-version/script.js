@@ -298,7 +298,11 @@ function generateSignatureHtml() {
                             <a href="${COMPANY_INFO[company].website}" style="color: ${borderColor}; text-decoration: none; background-color: transparent !important;">carwashsuperstore.com</a><br>
                             <a href="${COMPANY_INFO[company].secondWebsite}" style="color: #ee3d3a; text-decoration: none; background-color: transparent !important;">nationalprideequip.com</a>
                         </div>
-                        ` : ''}
+                        ` : (COMPANY_INFO[company].website ? `
+                        <div style="font-size: 12px; margin-bottom: 2px; background-color: transparent !important;">
+                            <a href="${COMPANY_INFO[company].website}" style="color: ${borderColor}; text-decoration: none; background-color: transparent !important;">${COMPANY_INFO[company].website.replace(/^https?:\/\//, '').replace(/\/$/, '').replace('www.', '')}</a>
+                        </div>
+                        ` : '')}
                     </td>
                 </tr>
             </table>
@@ -601,5 +605,3 @@ function deleteSignature(id, skipConfirmation = false) {
         loadSavedSignatures();
     }
 }
-
-
