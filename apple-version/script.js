@@ -605,3 +605,5 @@ function deleteSignature(id, skipConfirmation = false) {
         loadSavedSignatures();
     }
 }
+
+
