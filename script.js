@@ -52,14 +52,14 @@ const DEFAULT_DISCLAIMER = "The content of this email is confidential; this emai
 const COMPANY_INFO = {
     indiana: {
         name: "Indiana Car Wash Holdings LLC",
-        website: "https://www.ohiocwh.com",
+        website: "",
         secondWebsite: "",
         color: "#FF5500",
-        email: "yourmail@ohiocwh.com"
+        email: "youremail@indianacwh.com"
     },
     ohio: {
         name: "Ohio Car Wash Holdings LLC",
-        website: "https://www.ohiocwh.com",
+        website: "",
         secondWebsite: "",
         color: "#FF5500",
         email: "yourmail@ohiocwh.com"
@@ -72,25 +72,25 @@ const COMPANY_INFO = {
         email: "myemail@nationalpridecarwash.com"
     },
     dickys: {
-        name: "Dickys Express",
-        website: "",
+        name: "Dicky's Express Car Wash",
+        website: "https://www.dickyscarwash.com/",
         secondWebsite: "",
         color: "#d72127",
-        email: "yourmail@dickeysexpress.com"
+        email: "youremail@dickyscarwash.com"
     },
     tiptop: {
-        name: "Tip Top",
-        website: "",
+        name: "Tip Top Car Wash",
+        website: "https://www.tiptopcarwashes.com/",
         secondWebsite: "",
         color: "#031931",
-        email: "yourmail@tiptop.com"
+        email: "youremail@tiptopcarwashes.com"
     },
     buckeye: {
-        name: "Buckeye Express",
-        website: "",
+        name: "Buckeye Express Car Wash",
+        website: "https://www.buckeyeexpresscarwash.com/",
         secondWebsite: "",
         color: "#95262c",
-        email: "yourmail@buckeyeexpress.com"
+        email: "youremail@buckeyeexpresscarwash.com"
     }
 };
 
@@ -164,11 +164,19 @@ function initFormEvents() {
         officePhoneInput.value = '(419) 567-6133';
     }
     
-    // Make sure the address field has a default value
-    const addressInput = document.getElementById('address');
-    if (addressInput.value === '') {
-        addressInput.value = '905 Hickory Ln, Mansfield, OH 44905';
-    }
+    // Address editing functionality
+    const editAddressCheckbox = document.getElementById('edit-address');
+    const addressField = document.getElementById('address-field');
+    const customAddressInput = document.getElementById('custom-address');
+    
+    editAddressCheckbox.addEventListener('change', function() {
+        if (this.checked) {
+            addressField.style.display = 'block';
+        } else {
+            addressField.style.display = 'none';
+        }
+        updateSignaturePreview();
+    });
     
     // Save button
     document.getElementById('save-signature').addEventListener('click', saveSignature);
@@ -239,8 +247,11 @@ function generateSignatureHtml() {
     // Get form values
     const name = document.getElementById('name').value.trim();
     const title = document.getElementById('title').value.trim();
-    // Get the static address and check if it should be included
-    const address = document.getElementById('address').value.trim();
+    // Get address - use custom address if edit checkbox is checked, otherwise use default
+    const editAddress = document.getElementById('edit-address').checked;
+    const address = editAddress ? 
+        document.getElementById('custom-address').value.trim() : 
+        '905 Hickory Ln, Mansfield, OH 44905';
     const includeAddress = document.getElementById('include-address').checked;
     const includeCell = document.getElementById('include-cell').checked;
     const cellPhone = includeCell ? document.getElementById('cell-phone').value.trim() : '';
@@ -289,12 +300,21 @@ function generateSignatureHtml() {
     const displayEmail = email || COMPANY_INFO[company].email;
     html += `<div style="font-size: 12px; margin-bottom: 2px; background-color: transparent !important;">Email: <a href="mailto:${displayEmail}" style="color: ${borderColor}; text-decoration: none; background-color: transparent !important;">${displayEmail}</a></div>`;
     
-    // Add websites only for National Pride
+    // Add websites for companies that have them
     if (company === 'national') {
         html += `
             <div style="font-size: 12px; margin-bottom: 2px; background-color: transparent !important;">
                 <a href="${COMPANY_INFO[company].website}" style="color: ${borderColor}; text-decoration: none; background-color: transparent !important;">carwashsuperstore.com</a><br>
                 <a href="${COMPANY_INFO[company].secondWebsite}" style="color: #ee3d3a; text-decoration: none; background-color: transparent !important;">nationalprideequip.com</a>
+            </div>
+        `;
+    } else if (COMPANY_INFO[company].website) {
+        // Extract domain from URL for display
+        const websiteUrl = COMPANY_INFO[company].website;
+        const displayDomain = websiteUrl.replace(/^https?:\/\//, '').replace(/\/$/, '').replace('www.', '');
+        html += `
+            <div style="font-size: 12px; margin-bottom: 2px; background-color: transparent !important;">
+                <a href="${websiteUrl}" style="color: ${borderColor}; text-decoration: none; background-color: transparent !important;">${displayDomain}</a>
             </div>
         `;
     }
