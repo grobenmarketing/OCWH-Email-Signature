@@ -377,7 +377,11 @@ footer {
     padding-bottom: 30px;
     border-top: 1px solid #ddd;
     color: #7f8c8d;
-    font-size: 14px;
+    font-size: 10px;
+}
+
+footer p {
+    opacity: 0.5;
 }
 
 /* Responsive Styles */
