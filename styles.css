@@ -358,6 +358,10 @@ footer {
     font-size: 10px;
 }
 
+footer p {
+    opacity: 0.5;
+}
+
 /* Responsive Styles */
 @media (max-width: 768px) {
     .form-container {
