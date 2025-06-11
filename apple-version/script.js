@@ -72,21 +72,21 @@ const COMPANY_INFO = {
         email: "myemail@nationalpridecarwash.com"
     },
     dickys: {
-        name: "Dickys Express",
+        name: "Dicky's Express Car Wash",
         website: "",
         secondWebsite: "",
         color: "#d72127",
         email: "yourmail@dickeysexpress.com"
     },
     tiptop: {
-        name: "Tip Top",
+        name: "Tip Top Car Wash",
         website: "",
         secondWebsite: "",
         color: "#031931",
         email: "yourmail@tiptop.com"
     },
     buckeye: {
-        name: "Buckeye Express",
+        name: "Buckeye Express Car Wash",
         website: "",
         secondWebsite: "",
         color: "#95262c",
